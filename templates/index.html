@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ Advanced SKU Generator</title>
+    <!-- Premium Google Fonts -->
+    <link href="https://googleapis.com" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --error: #ef4444;
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: var(--bg); 
+            margin: 0; 
+            padding: 40px 20px;
+            color: var(--text-main);
+        }
+
+        .dashboard { 
+            max-width: 1000px; 
+            margin: 0 auto; 
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard { grid-template-columns: 1fr; }
+        }
+
+        .header-section {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header-section h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 0;
+            background: linear-gradient(to right, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card { 
+            background: var(--card-bg); 
+            padding: 30px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+            height: fit-content;
+        }
+
+        h2 { 
+            font-size: 1.4rem; 
+            margin-top: 0; 
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group { margin-bottom: 20px; }
+        
+        label { 
+            display: block; 
+            font-weight: 600; 
+            font-size: 0.9rem;
+            margin-bottom: 8px; 
+            color: var(--text-main); 
+        }
+
+        input[type="text"], select { 
+            width: 100%; 
+            padding: 12px 16px; 
+            border: 1px solid var(--border); 
+            border-radius: 10px; 
+            box-sizing: border-box; 
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            background-color: #f8fafc;
+        }
+
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        button { 
+            width: 100%; 
+            padding: 14px; 
+            background-color: var(--primary); 
+            color: white; 
+            border: none; 
+            border-radius: 10px; 
+            font-size: 1rem; 
+            cursor: pointer; 
+            font-weight: 600; 
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2);
+        }
+
+        button:hover { 
+            background-color: var(--primary-hover); 
+            transform: translateY(-1px);
+        }
+
+        .alert { 
+            padding: 14px; 
+            margin-bottom: 20px; 
+            border-radius: 10px; 
+            font-weight: 600; 
+            text-align: center; 
+            font-size: 0.95rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        .success { background-color: #ecfdf5; color: var(--success); border: 1px solid #a7f3d0; }
+        .error { background-color: #fef2f2; color: var(--error); border: 1px solid #fca5a5; }
+
+        @keyframes slideIn {
+            from { transform: translateY(-10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Fancy SKU Cards instead of boring table */
+        .sku-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .sku-card {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            padding: 16px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .sku-card:hover {
+            border-color: var(--primary);
+            transform: scale(1.01);
+        }
+
+        .sku-badge {
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            width: fit-content;
+        }
+
+        .sku-details {
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        .sku-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: flex;
+            gap: 15px;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-muted);
+            font-style: italic;
+            padding: 40px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header-section">
+    <h1>⚡ Inventory Control Hub</h1>
+    <p style="color: var(--text-muted); font-weight: 600; margin-top: 8px;">Smart Product SKU Generator & Database</p>
+</div>
+
+<div class="dashboard">
+    <!-- Left Column: Input Form -->
+    <div class="card">
+        <h2>🛠️ Generator Panel</h2>
+        
+        {% if msg %}
+            <div class="alert {% if m_type == 'success' %}success{% else %}error{% endif %}">
+                {{ msg }}
+            </div>
+        {% endif %}
+
+        <form method="POST" action="/">
+            <div class="form-group">
+                <label for="brand">Brand Name</label>
+                <input type="text" id="brand" name="brand" placeholder="e.g., Nike, Apple, Samsung" required>
+            </div>
+
+            <div class="form-group">
+                <label for="category">Category</label>
+                <select id="category" name="category">
+                    {% for cat in categories %}
+                        <option value="{{ cat }}">{{ cat }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="item_type">Product Type</label>
+                <input type="text" id="item_type" name="item_type" placeholder="e.g., TShirt, Laptop, Watch" required>
+            </div>
+
+            <div class="form-group">
+                <label for="color">Color</label>
+                <input type="text" id="color" name="color" placeholder="e.g., Crimson, Matte Black" required>
+            </div>
+
+            <div class="form-group">
+                <label for="size">Size / Specification</label>
+                <select id="size" name="size">
+                    {% for sz in sizes %}
+                        <option value="{{ sz }}">{{ sz }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit">⚡ Generate & Store SKU</button>
+        </form>
+    </div>
+
+    <!-- Right Column: Live Database Display -->
+    <div class="card">
+        <h2>📦 Real-time Database</h2>
+        <div class="sku-list">
+            {% if inventory %}
+                {% for sku, details in inventory.items() %}
+                    <div class="sku-card">
+                        <div class="sku-badge">{{ sku }}</div>
+                        <div class="sku-details">
+                            <strong>{{ details.brand }}</strong> {{ details.type }} &mdash; <span>{{ details.color }}</span>, <span>{{ details.size }}</span>
+                        </div>
+                        <div class="sku-meta">
+                            <span>📁 {{ details.category }}</span>
+                            <span>🟢 Active in Dict</span>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <p>No products mapped yet. Fill out the panel to pop data into the dictionary backend.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
