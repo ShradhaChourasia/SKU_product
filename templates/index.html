@@ -1,282 +1,494 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚡ Advanced SKU Generator</title>
-    <!-- Premium Google Fonts -->
-    <link href="https://googleapis.com" rel="stylesheet">
-    
+    <title>SKU Product Generator</title>
+
     <style>
-        :root {
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --success: #10b981;
-            --error: #ef4444;
-        }
-
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: var(--bg); 
-            margin: 0; 
-            padding: 40px 20px;
-            color: var(--text-main);
-        }
-
-        .dashboard { 
-            max-width: 1000px; 
-            margin: 0 auto; 
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
-
-        @media (max-width: 768px) {
-            .dashboard { grid-template-columns: 1fr; }
-        }
-
-        .header-section {
-            grid-column: 1 / -1;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .header-section h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
+        * {
             margin: 0;
-            background: linear-gradient(to right, #6366f1, #a855f7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .card { 
-            background: var(--card-bg); 
-            padding: 30px; 
-            border-radius: 16px; 
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-            border: 1px solid var(--border);
-            height: fit-content;
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f6fa;
+            color: #1e293b;
         }
 
-        h2 { 
-            font-size: 1.4rem; 
-            margin-top: 0; 
-            margin-bottom: 20px;
+        header {
+            background: #ffffff;
+            padding: 20px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .logo {
             display: flex;
             align-items: center;
+            gap: 12px;
+        }
+
+        .logo-box {
+            background: #4f46e5;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .logo h2 {
+            font-size: 20px;
+        }
+
+        .status {
+            color: green;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .heading {
+            margin-bottom: 25px;
+        }
+
+        .heading h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .heading p {
+            color: #64748b;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 22px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .stat-card p {
+            color: #64748b;
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+
+        .stat-card h2 {
+            font-size: 27px;
+            color: #4f46e5;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.4fr;
+            gap: 22px;
+            align-items: start;
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            background: #fafaff;
+            padding: 18px 22px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .panel-body {
+            padding: 22px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        input:focus, select:focus {
+            border-color: #4f46e5;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .generate-btn {
+            width: 100%;
+            padding: 13px;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .generate-btn:hover {
+            background: #3730a3;
+        }
+
+        .message {
+            background: #dcfce7;
+            color: #166534;
+            padding: 12px;
+            border-radius: 7px;
+            margin-bottom: 18px;
+            font-size: 13px;
+        }
+
+        .inventory-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
             gap: 10px;
         }
 
-        .form-group { margin-bottom: 20px; }
-        
-        label { 
-            display: block; 
-            font-weight: 600; 
-            font-size: 0.9rem;
-            margin-bottom: 8px; 
-            color: var(--text-main); 
+        .export-btn {
+            text-decoration: none;
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 9px 13px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
         }
 
-        input[type="text"], select { 
-            width: 100%; 
-            padding: 12px 16px; 
-            border: 1px solid var(--border); 
-            border-radius: 10px; 
-            box-sizing: border-box; 
-            font-family: inherit;
-            font-size: 0.95rem;
-            transition: all 0.2s ease;
-            background-color: #f8fafc;
-        }
-
-        input[type="text"]:focus, select:focus {
-            outline: none;
-            border-color: var(--primary);
-            background-color: #fff;
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-        }
-
-        button { 
-            width: 100%; 
-            padding: 14px; 
-            background-color: var(--primary); 
-            color: white; 
-            border: none; 
-            border-radius: 10px; 
-            font-size: 1rem; 
-            cursor: pointer; 
-            font-weight: 600; 
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2);
-        }
-
-        button:hover { 
-            background-color: var(--primary-hover); 
-            transform: translateY(-1px);
-        }
-
-        .alert { 
-            padding: 14px; 
-            margin-bottom: 20px; 
-            border-radius: 10px; 
-            font-weight: 600; 
-            text-align: center; 
-            font-size: 0.95rem;
-            animation: slideIn 0.3s ease;
-        }
-
-        .success { background-color: #ecfdf5; color: var(--success); border: 1px solid #a7f3d0; }
-        .error { background-color: #fef2f2; color: var(--error); border: 1px solid #fca5a5; }
-
-        @keyframes slideIn {
-            from { transform: translateY(-10px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        /* Fancy SKU Cards instead of boring table */
-        .sku-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            max-height: 500px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-
-        .sku-card {
-            background: #f8fafc;
-            border: 1px solid var(--border);
+        .product-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 9px;
             padding: 16px;
-            border-radius: 12px;
+            margin-bottom: 14px;
+        }
+
+        .sku-code {
+            display: inline-block;
+            background: #eef2ff;
+            color: #4338ca;
+            padding: 7px 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .product-card h4 {
+            margin-bottom: 10px;
+        }
+
+        .details {
             display: flex;
-            flex-direction: column;
-            gap: 8px;
-            transition: all 0.2s ease;
+            flex-wrap: wrap;
+            gap: 12px;
+            color: #64748b;
+            font-size: 12px;
+            margin-bottom: 15px;
         }
 
-        .sku-card:hover {
-            border-color: var(--primary);
-            transform: scale(1.01);
+        .details strong {
+            color: #334155;
         }
 
-        .sku-badge {
-            background: linear-gradient(135deg, #6366f1, #a855f7);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-weight: 800;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-            width: fit-content;
+        .delete-btn {
+            display: inline-block;
+            text-decoration: none;
+            color: #dc2626;
+            background: #fee2e2;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: bold;
         }
 
-        .sku-details {
-            font-size: 0.9rem;
-            color: var(--text-main);
-        }
-
-        .sku-meta {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            display: flex;
-            gap: 15px;
-        }
-
-        .empty-state {
+        .empty {
             text-align: center;
-            color: var(--text-muted);
-            font-style: italic;
-            padding: 40px 0;
+            padding: 40px 10px;
+            color: #64748b;
+        }
+
+        .empty h3 {
+            margin-bottom: 8px;
+            color: #334155;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        @media(max-width: 800px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width: 500px) {
+            header {
+                padding: 15px;
+            }
+
+            .logo h2 {
+                font-size: 15px;
+            }
+
+            .status {
+                display: none;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
+
 <body>
 
-<div class="header-section">
-    <h1>⚡ Inventory Control Hub</h1>
-    <p style="color: var(--text-muted); font-weight: 600; margin-top: 8px;">Smart Product SKU Generator & Database</p>
-</div>
-
-<div class="dashboard">
-    <!-- Left Column: Input Form -->
-    <div class="card">
-        <h2>🛠️ Generator Panel</h2>
-        
-        {% if msg %}
-            <div class="alert {% if m_type == 'success' %}success{% else %}error{% endif %}">
-                {{ msg }}
-            </div>
-        {% endif %}
-
-        <form method="POST" action="/">
-            <div class="form-group">
-                <label for="brand">Brand Name</label>
-                <input type="text" id="brand" name="brand" placeholder="e.g., Nike, Apple, Samsung" required>
-            </div>
-
-            <div class="form-group">
-                <label for="category">Category</label>
-                <select id="category" name="category">
-                    {% for cat in categories %}
-                        <option value="{{ cat }}">{{ cat }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="item_type">Product Type</label>
-                <input type="text" id="item_type" name="item_type" placeholder="e.g., TShirt, Laptop, Watch" required>
-            </div>
-
-            <div class="form-group">
-                <label for="color">Color</label>
-                <input type="text" id="color" name="color" placeholder="e.g., Crimson, Matte Black" required>
-            </div>
-
-            <div class="form-group">
-                <label for="size">Size / Specification</label>
-                <select id="size" name="size">
-                    {% for sz in sizes %}
-                        <option value="{{ sz }}">{{ sz }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <button type="submit">⚡ Generate & Store SKU</button>
-        </form>
-    </div>
-
-    <!-- Right Column: Live Database Display -->
-    <div class="card">
-        <h2>📦 Real-time Database</h2>
-        <div class="sku-list">
-            {% if inventory %}
-                {% for sku, details in inventory.items() %}
-                    <div class="sku-card">
-                        <div class="sku-badge">{{ sku }}</div>
-                        <div class="sku-details">
-                            <strong>{{ details.brand }}</strong> {{ details.type }} &mdash; <span>{{ details.color }}</span>, <span>{{ details.size }}</span>
-                        </div>
-                        <div class="sku-meta">
-                            <span>📁 {{ details.category }}</span>
-                            <span>🟢 Active in Dict</span>
-                        </div>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <div class="empty-state">
-                    <p>No products mapped yet. Fill out the panel to pop data into the dictionary backend.</p>
-                </div>
-            {% endif %}
+    <header>
+        <div class="logo">
+            <div class="logo-box">SKU</div>
+            <h2>Product Generator</h2>
         </div>
-    </div>
-</div>
+
+        <div class="status">● System Active</div>
+    </header>
+
+    <main class="container">
+
+        <div class="heading">
+            <h1>Inventory Dashboard</h1>
+            <p>Generate and manage your product SKU records.</p>
+        </div>
+
+        <!-- Dashboard Statistics -->
+
+        <section class="stats">
+
+            <div class="stat-card">
+                <p>Total Products</p>
+                <h2>{{ inventory|length }}</h2>
+            </div>
+
+            <div class="stat-card">
+                <p>Available Categories</p>
+                <h2>{{ categories|length }}</h2>
+            </div>
+
+            <div class="stat-card">
+                <p>System Status</p>
+                <h2 style="font-size:19px;color:green;">Operational</h2>
+            </div>
+
+        </section>
+
+        <section class="main-grid">
+
+            <!-- SKU Generator -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+                    <h3>⚙️ Generate New SKU</h3>
+                </div>
+
+                <div class="panel-body">
+
+                    {% if msg %}
+                    <div class="message">
+                        {{ msg }}
+                    </div>
+                    {% endif %}
+
+                    <form method="POST" action="/">
+
+                        <div class="form-group">
+                            <label>Brand Name</label>
+                            <input
+                                type="text"
+                                name="brand"
+                                placeholder="Example: Nike"
+                                required>
+                        </div>
+
+                        <div class="form-row">
+
+                            <div class="form-group">
+                                <label>Category</label>
+
+                                <select name="category" required>
+                                    {% for cat in categories %}
+                                    <option value="{{ cat }}">
+                                        {{ cat }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Product Size</label>
+
+                                <select name="size" required>
+                                    {% for sz in sizes %}
+                                    <option value="{{ sz }}">
+                                        {{ sz }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group">
+                            <label>Product Type</label>
+                            <input
+                                type="text"
+                                name="item_type"
+                                placeholder="Example: Shoes"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Product Color</label>
+                            <input
+                                type="text"
+                                name="color"
+                                placeholder="Example: Black"
+                                required>
+                        </div>
+
+                        <button type="submit" class="generate-btn">
+                            + Generate SKU
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+
+            <!-- Product Inventory -->
+
+            <div class="panel">
+
+                <div class="panel-header inventory-header">
+                    <h3>📦 Product Inventory</h3>
+
+                    {% if inventory %}
+                    <a href="{{ url_for('export_csv') }}"
+                       class="export-btn">
+                        ↓ Export CSV
+                    </a>
+                    {% endif %}
+                </div>
+
+                <div class="panel-body">
+
+                    {% if inventory %}
+
+                        {% for sku, details in inventory.items() %}
+
+                        <div class="product-card">
+
+                            <div class="sku-code">
+                                {{ sku }}
+                            </div>
+
+                            <h4>
+                                {{ details.brand }} - {{ details.type }}
+                            </h4>
+
+                            <div class="details">
+                                <span>
+                                    Category:
+                                    <strong>{{ details.category }}</strong>
+                                </span>
+
+                                <span>
+                                    Color:
+                                    <strong>{{ details.color }}</strong>
+                                </span>
+
+                                <span>
+                                    Size:
+                                    <strong>{{ details.size }}</strong>
+                                </span>
+                            </div>
+
+                            <a
+                                href="{{ url_for('delete_sku', sku=sku) }}"
+                                class="delete-btn"
+                                onclick="return confirm('Delete this product?')">
+                                Delete Product
+                            </a>
+
+                        </div>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <div class="empty">
+                            <h3>No Products Yet</h3>
+                            <p>Your products will appear here.</p>
+                        </div>
+
+                    {% endif %}
+
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer>
+        SKU Product Generator | Inventory Management System
+    </footer>
 
 </body>
 </html>
