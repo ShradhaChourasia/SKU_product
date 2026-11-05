@@ -1,65 +1,55 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for, Response
 
 app = Flask(__name__)
 
-# --- HAMARI PYTHON DATA STRUCTURES ---
-# 1. TUPLE: Fixed options jo change nahi honge
-CATEGORIES = ('Electronics', 'Clothing', 'Footwear', 'Home Appliances')
-SIZES = ('Small', 'Medium', 'Large', 'Extra Large', 'Not Applicable')
+# Persistent operational database state
+inventory = {}
+categories = ["Electronics", "Clothing", "Footwear", "Home Appliances"]
+sizes = ["Small", "Medium", "Large", "XL", "N/A"]
 
-# 2. DICTIONARY: Hamari tijori (Database) jahan saara data save hoga
-inventory_db = {}
-
-# 3. SET: Sirf unique SKUs track karne ke liye (Taaki duplicate na ho)
-unique_skus = set()
-
-# --- WEBPAGE ROUTE (Rasta) ---
-@app.route('/', methods=['GET', 'POST'])
+@app.route("/", methods=["GET", "POST"])
 def home():
-    message = None
-    msg_type = None
+    msg = None
+    if request.method == "POST":
+        brand = request.form.get("brand")
+        category = request.form.get("category")
+        item_type = request.form.get("item_type")
+        color = request.form.get("color")
+        size = request.form.get("size")
+        
+        # Streamlined Enterprise Architecture Logic for unique SKU tracking
+        sku = f"{brand[:3].upper()}-{category[:2].upper()}-{item_type[:2].upper()}-{color[:2].upper()}"
+        
+        inventory[sku] = {
+            "brand": brand,
+            "category": category,
+            "type": item_type,
+            "color": color,
+            "size": size
+        }
+        msg = f"Architecture String {sku} Generated Successfully!"
+        
+    return render_template("index.html", inventory=inventory, categories=categories, sizes=sizes, msg=msg)
 
-    if request.method == 'POST':
-        brand = request.form.get('brand').strip()
-        category = request.form.get('category')
-        item_type = request.form.get('item_type').strip()
-        color = request.form.get('color').strip()
-        size = request.form.get('size')
+# Feature: Purge/Delete records from real-time engine
+@app.route("/delete/<sku>")
+def delete_sku(sku):
+    if sku in inventory:
+        del inventory[sku]
+    return redirect(url_for("home"))
 
-        if brand and item_type and color:
-            # --- SKU GENERATION LOGIC (String Slicing) ---
-            brand_code = brand[:3].upper()      # e.g., Nike -> NIK
-            type_code = item_type[:3].upper()   # e.g., T-Shirt -> TSH
-            color_code = color[:2].upper()      # e.g., Red -> RE
-            size_code = "NA" if size == "Not Applicable" else size[:2].upper()
+# Feature: Data Mining Stream to Export Database to CSV/Excel
+@app.route("/export")
+def export_csv():
+    csv_data = "SKU,Brand,Category,Product Type,Color,Size\n"
+    for sku, details in inventory.items():
+        csv_data += f"{sku},{details['brand']},{details['category']},{details['type']},{details['color']},{details['size']}\n"
+    
+    return Response(
+        csv_data,
+        mimetype="text/csv",
+        headers={"Content-disposition": "attachment; filename=sku_inventory_report.csv"}
+    )
 
-            sku = f"{brand_code}-{type_code}-{color_code}-{size_code}"
-
-            # --- SET & DICT USE ---
-            if sku in unique_skus:
-                message = f"⚠️ SKU '{sku}' pehle se inventory me hai!"
-                msg_type = "error"
-            else:
-                unique_skus.add(sku)
-                inventory_db[sku] = {
-                    'brand': brand,
-                    'category': category,
-                    'type': item_type,
-                    'color': color,
-                    'size': size
-                }
-                message = f"🎉 Success! Naya SKU bana: {sku}"
-                msg_type = "success"
-        else:
-            message = "⚠️ Please saari fields fill karein!"
-            msg_type = "error"
-
-    return render_template('index.html', 
-                           categories=CATEGORIES, 
-                           sizes=SIZES, 
-                           inventory=inventory_db,
-                           msg=message,
-                           m_type=msg_type)
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
